@@ -4,7 +4,7 @@ async function status(request, response) {
 
   const updatedAt = new Date().toISOString();
 
-  const version = await database.query('SELECT VERSION()');
+  const version = await database.query('SHOW server_version');
 
   const maxConnections = await database.query('SHOW max_connections');
 
@@ -12,10 +12,12 @@ async function status(request, response) {
 
   response.status(200).json({
     updated_at : updatedAt,
-    database : {
-      version : version.rows[0].version,
-      max_connections : maxConnections.rows[0].max_connections,
-      used_connections : usedConnections.rows[0].usedconnections,
+    dependencies : {
+      database : {
+        version : version.rows[0].server_version,
+        max_connections : maxConnections.rows[0].max_connections,
+        used_connections : usedConnections.rows[0].usedconnections,
+      }
     }
   });
 }
